@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -32,7 +33,11 @@ class AddVacationFragment : Fragment() {
 
     private lateinit var binding: FragmentAddVacationBinding
 
+    private var isNameValid = false
+    private var isLocationValid = false
+
     private var imageBmp: Bitmap? = null
+    private var date: Date? = null
 
     private val selectImageFromGalleryResult =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -64,44 +69,7 @@ class AddVacationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.chooseDateBtn.setOnClickListener {
-
-            val calendar = Calendar.getInstance()
-            val now = calendar.timeInMillis
-            val currentYear = calendar[Calendar.YEAR]
-            val currentMonth = calendar[Calendar.MONTH]
-            val currentDay = calendar[Calendar.DAY_OF_MONTH]
-            val currentHour = calendar[Calendar.HOUR_OF_DAY]
-            val currentMinute = calendar[Calendar.MINUTE]
-
-            val datePickerDialog = DatePickerDialog(
-                requireContext(),
-                { _, year, month, day ->
-                    // Show time picker dialog
-                    TimePickerDialog(
-                        requireContext(),
-                        { _, hour, minute ->
-
-                            // Create picked date
-                            val pickedDateTime = Calendar.getInstance()
-                            pickedDateTime.set(year, month, day, hour, minute)
-
-                            // Set the date
-                            binding.date.text = UiUtils.formatDate(pickedDateTime.time)
-
-                        },
-                        currentHour,
-                        currentMinute,
-                        DateFormat.is24HourFormat(requireContext())
-                    ).show()
-                },
-                currentYear,
-                currentMonth,
-                currentDay
-            )
-
-            datePickerDialog.datePicker.minDate = now
-            // Show date picker dialog
-            datePickerDialog.show()
+            pickDate()
         }
 
         binding.chooseImageBtn.setOnClickListener {
@@ -109,71 +77,134 @@ class AddVacationFragment : Fragment() {
         }
 
         binding.addBtn.setOnClickListener {
-            val name = binding.name.text.toString()
-            val hotelName = binding.hotelName.text.toString()
-            val local = binding.location.text.toString()
-            val date = binding.date.text.toString()
-            val necessaryMoneyAmount = binding.necessaryMoneyAmount.text.toString()
-            val description = binding.description.text.toString()
-            var imageName: String? = null
-
-            if (imageBmp != null) {
-                imageName = "img${System.currentTimeMillis()}"
-
-                val dir = File(requireActivity().cacheDir, "vacations_images")
-                val file = File(dir, imageName)
-
-                if (!dir.exists())
-                    dir.mkdirs()
-
-                if (file.exists())
-                    file.delete()
-
-                file.createNewFile()
-                val byteArrayOutputStream = ByteArrayOutputStream()
-                imageBmp?.compress(Bitmap.CompressFormat.PNG, 92, byteArrayOutputStream)
-                val byteArray = byteArrayOutputStream.toByteArray()
-                file.writeBytes(byteArray)
-            }
-
-            // Create a new map of values, where column names are the keys
-            val values = ContentValues().apply {
-                put(VacationEntity.COLUMN_NAME_NAME, name)
-                put(VacationEntity.COLUMN_NAME_HOTEL_NAME, hotelName)
-                put(VacationEntity.COLUMN_NAME_LOCATION, local)
-                put(VacationEntity.COLUMN_NAME_DATE, date)
-                put(VacationEntity.COLUMN_NAME_NECESSARY_MONEY_AMOUNT, necessaryMoneyAmount)
-                put(VacationEntity.COLUMN_NAME_DESCRIPTION, description)
-                put(VacationEntity.COLUMN_NAME_IMAGE_NAME, imageName)
-            }
-
-            // Insert the new row, returning the primary key value of the new row
-            (activity as MainActivity?)?.let { activity ->
-                val newRowId = activity.dbHelper?.insert(
-                    VacationEntity.TABLE_NAME,
-                    values
-                )
-
-                if (newRowId != null && newRowId > -1) {
-                    Toast.makeText(
-                        activity,
-                        getString(R.string.vacation_add_success),
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    findNavController().popBackStack()
-                } else // Show a toast that city creation failed
-                    Toast.makeText(
-                        activity,
-                        getString(R.string.vacation_add_fail),
-                        Toast.LENGTH_SHORT
-                    ).show()
-            }
+            addVacation()
         }
+
+        binding.name.doOnTextChanged { text, _, _, _ ->
+            isNameValid = !text.isNullOrBlank()
+
+            validateForm()
+        }
+
+        binding.location.doOnTextChanged { text, _, _, _ ->
+            isLocationValid = !text.isNullOrBlank()
+
+            validateForm()
+        }
+    }
+
+    private fun validateForm() {
+        binding.addBtn.isEnabled = isNameValid && isLocationValid && date != null
+    }
+
+    private fun pickDate() {
+        val calendar = Calendar.getInstance()
+        val now = calendar.timeInMillis
+        val currentYear = calendar[Calendar.YEAR]
+        val currentMonth = calendar[Calendar.MONTH]
+        val currentDay = calendar[Calendar.DAY_OF_MONTH]
+        val currentHour = calendar[Calendar.HOUR_OF_DAY]
+        val currentMinute = calendar[Calendar.MINUTE]
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, day ->
+                // Show time picker dialog
+                TimePickerDialog(
+                    requireContext(),
+                    { _, hour, minute ->
+
+                        // Create picked date
+                        val pickedDateTime = Calendar.getInstance()
+                        pickedDateTime.set(year, month, day, hour, minute)
+
+                        // Set the date
+                        pickedDateTime.time.let {
+                            this.date = it
+                            binding.date.text = UiUtils.formatDate(it)
+                            validateForm()
+                        }
+                    },
+                    currentHour,
+                    currentMinute,
+                    DateFormat.is24HourFormat(requireContext())
+                ).show()
+            },
+            currentYear,
+            currentMonth,
+            currentDay
+        )
+
+        datePickerDialog.datePicker.minDate = now
+        // Show date picker dialog
+        datePickerDialog.show()
     }
 
     private fun pickImage() {
         selectImageFromGalleryResult.launch("image/*")
+    }
+
+    private fun addVacation() {
+        val name = binding.name.text.toString()
+        val hotelName = binding.hotelName.text.toString()
+        val local = binding.location.text.toString()
+        val date = binding.date.text.toString()
+        val necessaryMoneyAmount = binding.necessaryMoneyAmount.text.toString()
+        val description = binding.description.text.toString()
+        var imageName: String? = null
+
+        if (imageBmp != null) {
+            imageName = "img${System.currentTimeMillis()}"
+
+            val dir = File(requireActivity().cacheDir, "vacations_images")
+            val file = File(dir, imageName)
+
+            if (!dir.exists())
+                dir.mkdirs()
+
+            if (file.exists())
+                file.delete()
+
+            file.createNewFile()
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            imageBmp?.compress(Bitmap.CompressFormat.PNG, 92, byteArrayOutputStream)
+            val byteArray = byteArrayOutputStream.toByteArray()
+            file.writeBytes(byteArray)
+        }
+
+        // Create a new map of values, where column names are the keys
+        val values = ContentValues().apply {
+            put(VacationEntity.COLUMN_NAME_NAME, name)
+            put(VacationEntity.COLUMN_NAME_HOTEL_NAME, hotelName)
+            put(VacationEntity.COLUMN_NAME_LOCATION, local)
+            put(VacationEntity.COLUMN_NAME_DATE, date)
+            put(VacationEntity.COLUMN_NAME_NECESSARY_MONEY_AMOUNT, necessaryMoneyAmount)
+            put(VacationEntity.COLUMN_NAME_DESCRIPTION, description)
+            put(VacationEntity.COLUMN_NAME_IMAGE_NAME, imageName)
+        }
+
+        // Insert the new row, returning the primary key value of the new row
+        (activity as MainActivity?)?.let { activity ->
+            val newRowId = activity.dbHelper?.insert(
+                VacationEntity.TABLE_NAME,
+                values
+            )
+
+            if (newRowId != null && newRowId > -1) {
+                Toast.makeText(
+                    activity,
+                    getString(R.string.vacation_add_success),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                findNavController().popBackStack()
+            } else // Show a toast that city creation failed
+                Toast.makeText(
+                    activity,
+                    getString(R.string.vacation_add_fail),
+                    Toast.LENGTH_SHORT
+                ).show()
+        }
     }
 
     companion object {

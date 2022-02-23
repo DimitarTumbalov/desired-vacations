@@ -4,11 +4,11 @@ import java.util.*
 
 data class Vacation(
     var id: Int = -1,
-    val name: String = "",
-    val hotelName: String = "",
-    val location: String = "",
-    val date: Date? = null,
+    val name: String,
+    val location: String,
+    val hotelName: String? = null,
     val necessaryMoneyAmount: Int? = null,
-    val description: String = "",
+    val description: String? = null,
+    val date: Date,
     val imageName: String? = null
 )

@@ -9,8 +9,13 @@ import com.synergygfs.desiredvacations.data.models.Vacation
 import com.synergygfs.desiredvacations.databinding.ItemVacationBinding
 import java.util.*
 
+interface ItemViewListeners {
+    fun onLongClick(vacationId: Int)
+}
+
 class VacationsAdapter(
-    private var vacationsCollection: Vector<Vacation>
+    private var vacationsCollection: Vector<Vacation>,
+    private val itemViewListeners: ItemViewListeners
 ) :
     RecyclerView.Adapter<VacationsAdapter.MyViewHolder>() {
 
@@ -38,6 +43,11 @@ class VacationsAdapter(
 
         holder.binding?.name?.text = vacation.name
         holder.binding?.location?.text = vacation.location
+
+        holder.itemView.setOnLongClickListener {
+            itemViewListeners.onLongClick(vacation.id)
+            true
+        }
     }
 
     class MyViewHolder(binding: ItemVacationBinding) :

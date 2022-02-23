@@ -1,5 +1,6 @@
 package com.synergygfs.desiredvacations.ui
 
+import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -15,6 +16,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     var dbHelper: DbHelper? = null
+
+    private var lastDialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +38,14 @@ class MainActivity : AppCompatActivity() {
 
         // Set up DbHelper
         dbHelper = DbHelper(this)
+    }
+
+    fun showDialog(dialog: Dialog) {
+        if (lastDialog?.isShowing == true)
+            lastDialog?.dismiss()
+
+        dialog.show()
+        lastDialog = dialog
     }
 
 }

@@ -80,11 +80,11 @@ class DbHelper(context: Context) :
                 val vacation = Vacation(
                     id,
                     name,
-                    hotelName,
                     location,
-                    date,
+                    hotelName,
                     necessaryMoneyAmount,
                     description,
+                    date!!,
                     imageName
                 )
                 vacationsCollection.add(vacation)
@@ -102,6 +102,12 @@ class DbHelper(context: Context) :
         return getDb()?.insert(tableName, null, values)
     }
 
+    fun deleteVacationById(id: Int): Int? {
+        val selection = "${BaseColumns._ID} LIKE ?"
+        val selectionArgs = arrayOf(id.toString())
+        return getDb()?.delete(VacationEntity.TABLE_NAME, selection, selectionArgs)
+    }
+
     companion object {
         // If you change the database schema, you must increment the database version.
         private const val DATABASE_VERSION = 1
@@ -110,12 +116,12 @@ class DbHelper(context: Context) :
         private const val SQL_CREATE_VACATION_ENTRIES =
             "CREATE TABLE IF NOT EXISTS ${VacationEntity.TABLE_NAME} (" +
                     "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-                    "${VacationEntity.COLUMN_NAME_NAME} TEXT," +
+                    "${VacationEntity.COLUMN_NAME_NAME} TEXT NOT NULL," +
+                    "${VacationEntity.COLUMN_NAME_LOCATION} TEXT NOT NULL," +
                     "${VacationEntity.COLUMN_NAME_HOTEL_NAME} TEXT," +
-                    "${VacationEntity.COLUMN_NAME_LOCATION} TEXT," +
-                    "${VacationEntity.COLUMN_NAME_DATE} TEXT," +
                     "${VacationEntity.COLUMN_NAME_NECESSARY_MONEY_AMOUNT} INTEGER," +
                     "${VacationEntity.COLUMN_NAME_DESCRIPTION} TEXT," +
+                    "${VacationEntity.COLUMN_NAME_DATE} TEXT NOT NULL," +
                     "${VacationEntity.COLUMN_NAME_IMAGE_NAME} TEXT )"
 
         private const val SQL_DELETE_VACATION_ENTRIES =

@@ -4,151 +4,176 @@
 
     <data />
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/background"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toTopOf="@id/footer"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/primary"
+                    android:hint="@string/name"
+                    android:imeOptions="actionNext|flagNoExtractUi"
+                    android:importantForAutofill="no"
+                    android:inputType="text|textNoSuggestions"
+                    android:lines="1"
+                    android:maxLength="100"
+                    android:nextFocusDown="@id/hotel_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:backgroundTint="@color/primary"
+                    android:hint="@string/location"
+                    android:imeOptions="actionNext|flagNoExtractUi"
+                    android:importantForAutofill="no"
+                    android:inputType="text|textNoSuggestions"
+                    android:lines="1"
+                    android:maxLength="100"
+                    android:nextFocusDown="@id/necessary_money_amount"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/name" />
+
+                <EditText
+                    android:id="@+id/hotel_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/hotel_name"
+                    android:imeOptions="actionNext|flagNoExtractUi"
+                    android:importantForAutofill="no"
+                    android:inputType="text|textNoSuggestions"
+                    android:lines="1"
+                    android:maxLength="100"
+                    android:nextFocusDown="@id/location"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/location" />
+
+                <EditText
+                    android:id="@+id/necessary_money_amount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/necessary_money_amount"
+                    android:imeOptions="actionNext|flagNoExtractUi"
+                    android:importantForAutofill="no"
+                    android:inputType="numberDecimal"
+                    android:lines="1"
+                    android:maxLength="10"
+                    android:nextFocusDown="@id/description"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/hotel_name" />
+
+                <EditText
+                    android:id="@+id/description"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:hint="@string/description"
+                    android:imeOptions="actionDone|flagNoExtractUi"
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine|textNoSuggestions"
+                    android:lines="5"
+                    android:maxLength="2000"
+                    android:maxLines="10"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/necessary_money_amount" />
+
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@color/gray"
+                    app:layout_constraintDimensionRatio="16:9"
+                    app:layout_constraintEnd_toStartOf="@id/choose_image_btn"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/description"
+                    app:layout_constraintWidth_max="200dp"
+                    android:contentDescription="@string/image" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/choose_image_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/choose_image"
+                    app:layout_constraintBottom_toBottomOf="@id/image"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/image" />
+
+                <TextView
+                    android:id="@+id/date"
+                    style="@style/p"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="@string/please_choose_a_date"
+                    app:layout_constraintBottom_toBottomOf="@id/choose_date_btn"
+                    app:layout_constraintEnd_toStartOf="@id/choose_date_btn"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/choose_date_btn" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/choose_date_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/choose_date"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/image" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/footer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-            <EditText
-                android:id="@+id/name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/name"
-                android:imeOptions="actionNext|flagNoExtractUi"
-                android:importantForAutofill="no"
-                android:inputType="text|textNoSuggestions"
-                android:lines="1"
-                android:maxLength="100"
-                android:nextFocusDown="@id/hotel_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:id="@+id/hotel_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/hotel_name"
-                android:imeOptions="actionNext|flagNoExtractUi"
-                android:importantForAutofill="no"
-                android:inputType="text|textNoSuggestions"
-                android:lines="1"
-                android:maxLength="100"
-                android:nextFocusDown="@id/location"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/name" />
-
-            <EditText
-                android:id="@+id/location"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/location"
-                android:imeOptions="actionNext|flagNoExtractUi"
-                android:importantForAutofill="no"
-                android:inputType="text|textNoSuggestions"
-                android:lines="1"
-                android:maxLength="100"
-                android:nextFocusDown="@id/necessary_money_amount"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/hotel_name" />
-
-            <EditText
-                android:id="@+id/necessary_money_amount"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/necessary_money_amount"
-                android:imeOptions="actionNext|flagNoExtractUi"
-                android:importantForAutofill="no"
-                android:inputType="numberDecimal"
-                android:lines="1"
-                android:maxLength="10"
-                android:nextFocusDown="@id/description"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/location" />
-
-            <EditText
-                android:id="@+id/description"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/description"
-                android:imeOptions="actionDone|flagNoExtractUi"
-                android:importantForAutofill="no"
-                android:inputType="textMultiLine|textNoSuggestions"
-                android:lines="5"
-                android:maxLength="2000"
-                android:maxLines="10"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/necessary_money_amount" />
-
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginTop="10dp"
-                android:src="@color/gray"
-                app:layout_constraintDimensionRatio="16:9"
-                app:layout_constraintEnd_toStartOf="@id/choose_image_btn"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/description"
-                app:layout_constraintWidth_max="200dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/choose_image_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/choose_image"
-                app:layout_constraintBottom_toBottomOf="@id/image"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/image" />
-
-            <TextView
-                android:id="@+id/date"
-                style="@style/p"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:lines="1"
-                android:text="@string/please_choose_a_date"
-                app:layout_constraintBottom_toBottomOf="@id/choose_date_btn"
-                app:layout_constraintEnd_toStartOf="@id/choose_date_btn"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/choose_date_btn" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/choose_date_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/choose_date"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/image" />
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/add_btn"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/add_vacation"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/choose_date_btn"
-                app:layout_constraintVertical_bias="0" />
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="5dp"
+                android:enabled="false"
+                android:text="@string/add_vacation" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
-    </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
