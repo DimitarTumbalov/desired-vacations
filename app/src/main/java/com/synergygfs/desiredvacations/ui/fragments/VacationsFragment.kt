@@ -23,6 +23,7 @@ import com.synergygfs.desiredvacations.databinding.FragmentVacationsBinding
 import com.synergygfs.desiredvacations.ui.MainActivity
 import com.synergygfs.desiredvacations.ui.adapters.ItemViewListeners
 import com.synergygfs.desiredvacations.ui.adapters.VacationsAdapter
+import java.io.File
 import java.util.*
 
 class VacationsFragment : Fragment(), ItemViewListeners {
@@ -92,7 +93,7 @@ class VacationsFragment : Fragment(), ItemViewListeners {
         findNavController().navigate(action)
     }
 
-    override fun onLongClick(vacationId: Int) {
+    override fun onLongClick(vacationId: Int, vacationImageName: String?) {
         (activity as MainActivity?)?.let { activity ->
             val dialog = Dialog(requireActivity())
             dialog.setContentView(R.layout.dialog_confirm_action)
@@ -114,6 +115,12 @@ class VacationsFragment : Fragment(), ItemViewListeners {
                 // set confirm btn click listener
                 setOnClickListener {
                     dialog.dismiss()
+
+                    // Delete the previous image
+                    val file =
+                        File("${activity.cacheDir.path}/vacations_images/${vacationImageName}")
+                    if (file.exists())
+                        file.delete()
 
                     val deletedRow = activity.dbHelper?.deleteVacationById(vacationId)
 

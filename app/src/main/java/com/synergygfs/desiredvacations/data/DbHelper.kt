@@ -42,6 +42,10 @@ class DbHelper(context: Context) :
         return sQLiteDb
     }
 
+    fun insert(tableName: String, values: ContentValues): Long? {
+        return getDb()?.insert(tableName, null, values)
+    }
+
     @SuppressLint("Range")
     fun getAllVacations(): Vector<Vacation> {
         val cursor =
@@ -98,8 +102,10 @@ class DbHelper(context: Context) :
         return vacationsCollection
     }
 
-    fun insert(tableName: String, values: ContentValues): Long? {
-        return getDb()?.insert(tableName, null, values)
+    fun updateVacation(values: ContentValues): Int? {
+        val selection = "${BaseColumns._ID} LIKE ?"
+        val selectionArgs = arrayOf(values.getAsString("_id"))
+        return getDb()?.update(VacationEntity.TABLE_NAME, values, selection, selectionArgs)
     }
 
     fun deleteVacationById(id: Int): Int? {

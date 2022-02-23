@@ -35,6 +35,21 @@
         <argument
             android:name="vacation"
             app:argType="com.synergygfs.desiredvacations.data.models.Vacation" />
+        <action
+            android:id="@+id/action_vacationFragment_to_editVacationFragment"
+            app:destination="@id/editVacationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editVacationFragment"
+        android:name="com.synergygfs.desiredvacations.ui.fragments.EditVacationFragment"
+        android:label="Edit Vacation"
+        tools:layout="@layout/fragment_edit_vacation">
+        <argument
+            android:name="vacation"
+            app:argType="com.synergygfs.desiredvacations.data.models.Vacation" />
     </fragment>
 
 </navigation>

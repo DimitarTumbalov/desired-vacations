@@ -7,9 +7,11 @@ import android.app.TimePickerDialog
 import android.content.ContentValues
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Bundle
+import android.provider.BaseColumns
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -24,20 +26,31 @@ import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.synergygfs.desiredvacations.R
 import com.synergygfs.desiredvacations.UiUtils
 import com.synergygfs.desiredvacations.data.VacationsContract.VacationEntity
-import com.synergygfs.desiredvacations.databinding.FragmentAddVacationBinding
+import com.synergygfs.desiredvacations.data.models.Vacation
+import com.synergygfs.desiredvacations.databinding.FragmentEditVacationBinding
 import com.synergygfs.desiredvacations.ui.MainActivity
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
 
 
-class AddVacationFragment : Fragment() {
+class EditVacationFragment : Fragment() {
 
-    private lateinit var binding: FragmentAddVacationBinding
+    private lateinit var binding: FragmentEditVacationBinding
+
+    private val args: VacationFragmentArgs by navArgs()
+
+    private lateinit var vacation: Vacation
 
     private var isNameValid = false
     private var isLocationValid = false
@@ -65,7 +78,7 @@ class AddVacationFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_add_vacation, container, false
+            inflater, R.layout.fragment_edit_vacation, container, false
         )
 
         return binding.root
@@ -74,7 +87,25 @@ class AddVacationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.date.setOnClickListener {
+        vacation = args.vacation
+
+        val name = binding.name
+        val location = binding.location
+        val date = binding.date
+
+        name.doOnTextChanged { text, _, _, _ ->
+            isNameValid = !text.isNullOrBlank()
+
+            validateForm()
+        }
+
+        location.doOnTextChanged { text, _, _, _ ->
+            isLocationValid = !text.isNullOrBlank()
+
+            validateForm()
+        }
+
+        date.setOnClickListener {
             pickDate()
         }
 
@@ -86,25 +117,24 @@ class AddVacationFragment : Fragment() {
             showMenu(it, R.menu.image_popup_menu)
         }
 
-        binding.addBtn.setOnClickListener {
-            addVacation()
+        binding.saveBtn.setOnClickListener {
+            updateVacation()
         }
 
-        binding.name.doOnTextChanged { text, _, _, _ ->
-            isNameValid = !text.isNullOrBlank()
+        imageBmp =
+            BitmapFactory.decodeFile("${requireContext().cacheDir}/vacations_images/${vacation.imageName}")
 
-            validateForm()
-        }
-
-        binding.location.doOnTextChanged { text, _, _, _ ->
-            isLocationValid = !text.isNullOrBlank()
-
-            validateForm()
-        }
+        loadImage()
+        name.setText(vacation.name)
+        location.setText(vacation.location)
+        setDate(vacation.date)
+        vacation.hotelName?.let { binding.hotelName.setText(it) }
+        vacation.necessaryMoneyAmount?.let { binding.necessaryMoneyAmount.setText(it.toString()) }
+        vacation.description?.let { binding.description.setText(it) }
     }
 
     private fun validateForm() {
-        binding.addBtn.isEnabled = isNameValid && isLocationValid && date != null
+        binding.saveBtn.isEnabled = isNameValid && isLocationValid && date != null
     }
 
     private fun pickDate() {
@@ -129,7 +159,11 @@ class AddVacationFragment : Fragment() {
                         pickedDateTime.set(year, month, day, hour, minute)
 
                         // Set the date
-                        setDate(pickedDateTime.time)
+                        pickedDateTime.time.let {
+                            this.date = it
+                            binding.date.setText(UiUtils.convertDateToString(it))
+                            validateForm()
+                        }
                     },
                     currentHour,
                     currentMinute,
@@ -146,20 +180,45 @@ class AddVacationFragment : Fragment() {
         datePickerDialog.show()
     }
 
-    private fun setDate(date: Date) {
-        this.date = date
-        binding.date.setText(UiUtils.convertDateToString(date))
-        validateForm()
-    }
-
     private fun pickImage() {
         selectImageFromGalleryResult.launch("image/*")
     }
 
     private fun loadImage() {
-        binding.chooseImageBtn.isVisible = false
-        Glide.with(this).load(imageBmp).centerCrop().into(binding.image)
-        binding.imageOptionsBtn.isVisible = true
+        Glide.with(this)
+            .load(imageBmp).centerCrop()
+            .placeholder(R.drawable.no_image)
+            .apply(
+                RequestOptions()
+                    .error(R.drawable.no_image)
+            )
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.imageOptionsBtn.isVisible = false
+                    binding.chooseImageBtn.isVisible = true
+
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.chooseImageBtn.isVisible = false
+                    binding.imageOptionsBtn.isVisible = true
+
+                    return false
+                }
+
+            }).into(binding.image)
     }
 
     private fun removeImage() {
@@ -191,12 +250,18 @@ class AddVacationFragment : Fragment() {
         popup.show()
     }
 
-    private fun addVacation() {
+    private fun setDate(date: Date) {
+        this.date = date
+        binding.date.setText(UiUtils.convertDateToString(date))
+        validateForm()
+    }
+
+    private fun updateVacation() {
         val name = binding.name.text.toString()
         val location = binding.location.text.toString()
         val date = binding.date.text.toString()
         val hotelName = binding.hotelName.text.toString()
-        val necessaryMoneyAmount = binding.necessaryMoneyAmount.text.toString()
+        val necessaryMoneyAmount = binding.necessaryMoneyAmount.text.toString().toInt()
         val description = binding.description.text.toString()
         var imageName: String? = null
 
@@ -221,6 +286,7 @@ class AddVacationFragment : Fragment() {
 
         // Create a new map of values, where column names are the keys
         val values = ContentValues().apply {
+            put(BaseColumns._ID, vacation.id)
             put(VacationEntity.COLUMN_NAME_NAME, name)
             put(VacationEntity.COLUMN_NAME_LOCATION, location)
             put(VacationEntity.COLUMN_NAME_DATE, date)
@@ -232,23 +298,42 @@ class AddVacationFragment : Fragment() {
 
         // Insert the new row, returning the primary key value of the new row
         (activity as MainActivity?)?.let { activity ->
-            val newRowId = activity.dbHelper?.insert(
-                VacationEntity.TABLE_NAME,
+
+            // Delete the previous image
+            val file = File("${activity.cacheDir.path}/vacations_images/${vacation.imageName}")
+            if (file.exists())
+                file.delete()
+
+            val newRowId = activity.dbHelper?.updateVacation(
                 values
             )
 
             if (newRowId != null && newRowId > -1) {
                 Toast.makeText(
                     activity,
-                    getString(R.string.vacation_add_success),
+                    getString(R.string.vacation_edit_success),
                     Toast.LENGTH_SHORT
                 ).show()
 
-                findNavController().popBackStack()
-            } else // Show a toast that city creation failed
+                findNavController().apply {
+                    previousBackStackEntry?.savedStateHandle?.set(
+                        "vacation", Vacation(
+                            vacation.id,
+                            name,
+                            location,
+                            this@EditVacationFragment.date!!,
+                            hotelName,
+                            necessaryMoneyAmount,
+                            description,
+                            imageName
+                        )
+                    )
+                    popBackStack()
+                }
+            } else // Show a toast that vacation creation failed
                 Toast.makeText(
                     activity,
-                    getString(R.string.vacation_add_fail),
+                    getString(R.string.vacation_edit_fail),
                     Toast.LENGTH_SHORT
                 ).show()
         }

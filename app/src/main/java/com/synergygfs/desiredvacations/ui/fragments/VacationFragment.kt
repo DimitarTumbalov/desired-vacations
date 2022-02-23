@@ -1,15 +1,15 @@
 package com.synergygfs.desiredvacations.ui.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.synergygfs.desiredvacations.R
 import com.synergygfs.desiredvacations.UiUtils
+import com.synergygfs.desiredvacations.data.models.Vacation
 import com.synergygfs.desiredvacations.databinding.FragmentVacationBinding
 
 class VacationFragment : Fragment() {
@@ -17,6 +17,14 @@ class VacationFragment : Fragment() {
     private lateinit var binding: FragmentVacationBinding
 
     private val args: VacationFragmentArgs by navArgs()
+
+    private var vacation: Vacation? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,17 +41,40 @@ class VacationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val vacation = args.vacation
+        vacation = args.vacation
+        updateVacationInfo()
 
-        val date = binding.date
-        val name = binding.name
-        val location = binding.location
-        val hotelName = binding.hotelName
-        val necessaryMoneyAmount = binding.necessaryMoneyAmount
-        val description = binding.description
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Vacation>("vacation")
+            ?.observe(viewLifecycleOwner) {
+                vacation = it
+                updateVacationInfo()
+            }
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        inflater.inflate(R.menu.vacation_options_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.edit -> {
+                val action =
+                    VacationFragmentDirections.actionVacationFragmentToEditVacationFragment(vacation!!)
+                findNavController().navigate(action)
+
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun updateVacationInfo() {
         Glide.with(requireContext())
-            .load("${requireContext().cacheDir.path}/vacations_images/${vacation.imageName}")
+            .load("${requireContext().cacheDir.path}/vacations_images/${vacation!!.imageName}")
             .centerCrop()
             .placeholder(
                 R.drawable.no_image
@@ -51,11 +82,11 @@ class VacationFragment : Fragment() {
             .error(R.drawable.default_image)
             .into(binding.image)
 
-        name.text = vacation.name
-        location.text = vacation.location
-        date.text = UiUtils.convertDateToString(vacation.date)
-        vacation.hotelName?.let { hotelName.text = it }
-        vacation.necessaryMoneyAmount?.let { necessaryMoneyAmount.text = it.toString() }
-        vacation.description?.let { description.text = it }
+        binding.name.text = vacation!!.name
+        binding.location.text = vacation!!.location
+        binding.date.text = UiUtils.convertDateToString(vacation!!.date)
+        vacation!!.hotelName?.let { binding.hotelName.text = it }
+        vacation!!.necessaryMoneyAmount?.let { binding.necessaryMoneyAmount.text = it.toString() }
+        vacation!!.description?.let { binding.description.text = it }
     }
 }

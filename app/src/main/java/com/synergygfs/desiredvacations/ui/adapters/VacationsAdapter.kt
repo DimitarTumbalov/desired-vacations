@@ -11,7 +11,7 @@ import java.util.*
 
 interface ItemViewListeners {
     fun onClick(vacation: Vacation)
-    fun onLongClick(vacationId: Int)
+    fun onLongClick(vacationId: Int, vacationImageName: String?)
 }
 
 class VacationsAdapter(
@@ -51,7 +51,7 @@ class VacationsAdapter(
         }
 
         itemView.setOnLongClickListener {
-            itemViewListeners.onLongClick(vacation.id)
+            itemViewListeners.onLongClick(vacation.id, vacation.imageName)
             true
         }
     }

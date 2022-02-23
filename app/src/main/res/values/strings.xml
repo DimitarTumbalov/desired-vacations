@@ -23,4 +23,8 @@
     <string name="remove_image">Remove image</string>
     <string name="icon">icon</string>
     <string name="more">More</string>
+    <string name="edit">Edit</string>
+    <string name="vacation_edit_success">Vacation was updated successfully</string>
+    <string name="vacation_edit_fail">Vacation couldn\'t be updated</string>
+    <string name="save_changes">Save changes</string>
 </resources>
