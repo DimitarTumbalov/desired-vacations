@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/vacationsFragment">
+
+    <fragment
+        android:id="@+id/vacationsFragment"
+        android:name="com.synergygfs.desiredvacations.ui.fragments.VacationsFragment"
+        android:label="Vacations"
+        tools:layout="@layout/fragment_vacations">
+        <action
+            android:id="@+id/action_vacationsFragment_to_addVacationFragment"
+            app:destination="@id/addVacationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addVacationFragment"
+        android:name="com.synergygfs.desiredvacations.ui.fragments.AddVacationFragment"
+        android:label="Add Vacation"
+        tools:layout="@layout/fragment_add_vacation" />
+
+</navigation>

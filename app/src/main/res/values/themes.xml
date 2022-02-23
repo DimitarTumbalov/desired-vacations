@@ -1,0 +1,67 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.DesiredVacations" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/primaryVariant</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondaryVariant</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/primaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="h5">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_high</item>
+    </style>
+
+    <style name="h6">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_high</item>
+    </style>
+
+    <style name="p">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_high</item>
+        <item name="android:textColorLink">@color/text_high</item>
+    </style>
+
+    <style name="p_bold">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_high</item>
+        <item name="android:textColorLink">@color/text_high</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/text_disabled</item>
+        <item name="android:focusable">false</item>
+    </style>
+
+    <style name="btn_clean" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="backgroundTint">@color/transparent</item>
+        <item name="rippleColor">@color/text_medium</item>
+        <item name="android:textColor">@color/text_high</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="cornerRadius">0dp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="iconTint">@color/text_high</item>
+        <item name="android:gravity">center</item>
+        <item name="iconPadding">10dp</item>
+        <item name="android:paddingStart">15dp</item>
+        <item name="android:paddingEnd">15dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+</resources>
