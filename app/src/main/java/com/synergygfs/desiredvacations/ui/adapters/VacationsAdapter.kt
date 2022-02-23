@@ -10,6 +10,7 @@ import com.synergygfs.desiredvacations.databinding.ItemVacationBinding
 import java.util.*
 
 interface ItemViewListeners {
+    fun onClick(vacation: Vacation)
     fun onLongClick(vacationId: Int)
 }
 
@@ -32,19 +33,24 @@ class VacationsAdapter(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val vacation = vacationsCollection[position]
+        val itemView = holder.itemView
 
         holder.binding?.image?.let {
             Glide.with(holder.itemView.context)
                 .load("${holder.itemView.context.cacheDir.path}/vacations_images/${vacation.imageName}")
                 .centerCrop().placeholder(
-                    R.color.gray
+                    R.drawable.default_image
                 ).into(it)
         }
 
         holder.binding?.name?.text = vacation.name
         holder.binding?.location?.text = vacation.location
 
-        holder.itemView.setOnLongClickListener {
+        itemView.setOnClickListener {
+            itemViewListeners.onClick(vacation)
+        }
+
+        itemView.setOnLongClickListener {
             itemViewListeners.onLongClick(vacation.id)
             true
         }

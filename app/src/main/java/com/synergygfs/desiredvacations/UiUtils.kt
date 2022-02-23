@@ -10,7 +10,7 @@ class UiUtils {
             return Constants.formatter.parse(dateString)
         }
 
-        fun formatDate(date: Date): String {
+        fun convertDateToString(date: Date): String {
             return Constants.formatter.format(date).toString()
         }
 

@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.synergygfs.desiredvacations.ui.fragments
 
 import android.app.DatePickerDialog
@@ -10,10 +12,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.MenuRes
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -49,7 +55,7 @@ class AddVacationFragment : Fragment() {
                 val bmp = BitmapFactory.decodeStream(inputStream)
                 imageBmp = ThumbnailUtils.extractThumbnail(bmp, 640, 360)
 
-                Glide.with(this).load(imageBmp).centerCrop().into(binding.image)
+                loadImage()
             }
         }
 
@@ -68,12 +74,16 @@ class AddVacationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.chooseDateBtn.setOnClickListener {
+        binding.date.setOnClickListener {
             pickDate()
         }
 
         binding.chooseImageBtn.setOnClickListener {
             pickImage()
+        }
+
+        binding.imageOptionsBtn.setOnClickListener {
+            showMenu(it, R.menu.image_popup_menu)
         }
 
         binding.addBtn.setOnClickListener {
@@ -121,7 +131,7 @@ class AddVacationFragment : Fragment() {
                         // Set the date
                         pickedDateTime.time.let {
                             this.date = it
-                            binding.date.text = UiUtils.formatDate(it)
+                            binding.date.setText(UiUtils.convertDateToString(it))
                             validateForm()
                         }
                     },
@@ -144,11 +154,46 @@ class AddVacationFragment : Fragment() {
         selectImageFromGalleryResult.launch("image/*")
     }
 
+    private fun loadImage() {
+        binding.chooseImageBtn.isVisible = false
+        Glide.with(this).load(imageBmp).centerCrop().into(binding.image)
+        binding.imageOptionsBtn.isVisible = true
+    }
+
+    private fun removeImage() {
+        binding.imageOptionsBtn.isVisible = false
+        imageBmp = null
+        Glide.with(this).load(R.drawable.no_image).placeholder(R.drawable.no_image)
+            .into(binding.image)
+        binding.chooseImageBtn.isVisible = true
+    }
+
+    private fun showMenu(v: View, @MenuRes menuRes: Int) {
+        val popup = PopupMenu(requireContext(), v)
+        popup.menuInflater.inflate(menuRes, popup.menu)
+
+        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            when (menuItem.itemId) {
+                R.id.change_image -> {
+                    pickImage()
+                }
+                R.id.remove_image -> {
+                    removeImage()
+                }
+            }
+
+            true
+        }
+
+        // Show the popup menu.
+        popup.show()
+    }
+
     private fun addVacation() {
         val name = binding.name.text.toString()
-        val hotelName = binding.hotelName.text.toString()
-        val local = binding.location.text.toString()
+        val location = binding.location.text.toString()
         val date = binding.date.text.toString()
+        val hotelName = binding.hotelName.text.toString()
         val necessaryMoneyAmount = binding.necessaryMoneyAmount.text.toString()
         val description = binding.description.text.toString()
         var imageName: String? = null
@@ -175,9 +220,9 @@ class AddVacationFragment : Fragment() {
         // Create a new map of values, where column names are the keys
         val values = ContentValues().apply {
             put(VacationEntity.COLUMN_NAME_NAME, name)
-            put(VacationEntity.COLUMN_NAME_HOTEL_NAME, hotelName)
-            put(VacationEntity.COLUMN_NAME_LOCATION, local)
+            put(VacationEntity.COLUMN_NAME_LOCATION, location)
             put(VacationEntity.COLUMN_NAME_DATE, date)
+            put(VacationEntity.COLUMN_NAME_HOTEL_NAME, hotelName)
             put(VacationEntity.COLUMN_NAME_NECESSARY_MONEY_AMOUNT, necessaryMoneyAmount)
             put(VacationEntity.COLUMN_NAME_DESCRIPTION, description)
             put(VacationEntity.COLUMN_NAME_IMAGE_NAME, imageName)
@@ -205,9 +250,5 @@ class AddVacationFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
         }
-    }
-
-    companion object {
-        const val TAG = "AddVacationFragment"
     }
 }

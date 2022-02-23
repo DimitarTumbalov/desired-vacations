@@ -2,7 +2,6 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
     app:startDestination="@id/vacationsFragment">
 
     <fragment
@@ -13,6 +12,11 @@
         <action
             android:id="@+id/action_vacationsFragment_to_addVacationFragment"
             app:destination="@id/addVacationFragment"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:popExitAnim="@anim/slide_out_bottom" />
+        <action
+            android:id="@+id/action_vacationsFragment_to_vacationFragment"
+            app:destination="@id/vacationFragment"
             app:enterAnim="@anim/slide_in_right"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
@@ -22,5 +26,15 @@
         android:name="com.synergygfs.desiredvacations.ui.fragments.AddVacationFragment"
         android:label="Add Vacation"
         tools:layout="@layout/fragment_add_vacation" />
+
+    <fragment
+        android:id="@+id/vacationFragment"
+        android:name="com.synergygfs.desiredvacations.ui.fragments.VacationFragment"
+        android:label="Vacation Info"
+        tools:layout="@layout/fragment_vacation">
+        <argument
+            android:name="vacation"
+            app:argType="com.synergygfs.desiredvacations.data.models.Vacation" />
+    </fragment>
 
 </navigation>

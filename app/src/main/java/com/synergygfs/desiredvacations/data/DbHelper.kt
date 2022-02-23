@@ -61,8 +61,6 @@ class DbHelper(context: Context) :
             try {
                 val id = cursor.getInt(cursor.getColumnIndex("_id"))
                 val name = cursor.getString(cursor.getColumnIndex(VacationEntity.COLUMN_NAME_NAME))
-                val hotelName =
-                    cursor.getString(cursor.getColumnIndex(VacationEntity.COLUMN_NAME_HOTEL_NAME))
                 val location =
                     cursor.getString(cursor.getColumnIndex(VacationEntity.COLUMN_NAME_LOCATION))
                 val date = UiUtils.convertStringToDate(
@@ -70,6 +68,8 @@ class DbHelper(context: Context) :
                         cursor.getColumnIndex(VacationEntity.COLUMN_NAME_DATE)
                     )
                 )
+                val hotelName =
+                    cursor.getString(cursor.getColumnIndex(VacationEntity.COLUMN_NAME_HOTEL_NAME))
                 val necessaryMoneyAmount =
                     cursor.getInt(cursor.getColumnIndex(VacationEntity.COLUMN_NAME_NECESSARY_MONEY_AMOUNT))
                 val description =
@@ -81,10 +81,10 @@ class DbHelper(context: Context) :
                     id,
                     name,
                     location,
+                    date!!,
                     hotelName,
                     necessaryMoneyAmount,
                     description,
-                    date!!,
                     imageName
                 )
                 vacationsCollection.add(vacation)
@@ -110,7 +110,7 @@ class DbHelper(context: Context) :
 
     companion object {
         // If you change the database schema, you must increment the database version.
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
         private const val DATABASE_NAME = "DesiredVacations.db"
 
         private const val SQL_CREATE_VACATION_ENTRIES =
@@ -118,10 +118,10 @@ class DbHelper(context: Context) :
                     "${BaseColumns._ID} INTEGER PRIMARY KEY," +
                     "${VacationEntity.COLUMN_NAME_NAME} TEXT NOT NULL," +
                     "${VacationEntity.COLUMN_NAME_LOCATION} TEXT NOT NULL," +
+                    "${VacationEntity.COLUMN_NAME_DATE} TEXT NOT NULL," +
                     "${VacationEntity.COLUMN_NAME_HOTEL_NAME} TEXT," +
                     "${VacationEntity.COLUMN_NAME_NECESSARY_MONEY_AMOUNT} INTEGER," +
                     "${VacationEntity.COLUMN_NAME_DESCRIPTION} TEXT," +
-                    "${VacationEntity.COLUMN_NAME_DATE} TEXT NOT NULL," +
                     "${VacationEntity.COLUMN_NAME_IMAGE_NAME} TEXT )"
 
         private const val SQL_DELETE_VACATION_ENTRIES =

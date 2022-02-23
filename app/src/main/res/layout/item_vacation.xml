@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:contentDescription="@string/image"
-            android:src="@color/gray"
+            android:src="@drawable/default_image"
             app:layout_constraintDimensionRatio="16:9"
             app:layout_constraintTop_toTopOf="parent" />
 

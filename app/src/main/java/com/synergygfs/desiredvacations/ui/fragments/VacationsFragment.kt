@@ -87,8 +87,9 @@ class VacationsFragment : Fragment(), ItemViewListeners {
         }
     }
 
-    companion object {
-        const val TAG = "VacationsFragment"
+    override fun onClick(vacation: Vacation) {
+        val action = VacationsFragmentDirections.actionVacationsFragmentToVacationFragment(vacation)
+        findNavController().navigate(action)
     }
 
     override fun onLongClick(vacationId: Int) {

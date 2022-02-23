@@ -5,9 +5,7 @@
     <string name="name">Name</string>
     <string name="hotel_name">Hotel name (Optional)</string>
     <string name="location">Location</string>
-    <string name="choose_date">Choose date</string>
-    <string name="please_choose_a_date">Please choose a date</string>
-    <string name="necessary_money_amount">Necessary money amount (Optional)</string>
+    <string name="necessary_money_amount">Necessary money (Optional)</string>
     <string name="description">Description (Optional)</string>
     <string name="choose_image">Choose image</string>
     <string name="add_vacation">Add Vacation</string>
@@ -20,4 +18,9 @@
     <string name="vacation_delete_success_msg">Vacation was deleted</string>
     <string name="vacation_delete_fail_msg">Vacation couldn\'t be deleted</string>
     <string name="image">image</string>
+    <string name="date">Date</string>
+    <string name="change_image">Change image</string>
+    <string name="remove_image">Remove image</string>
+    <string name="icon">icon</string>
+    <string name="more">More</string>
 </resources>
