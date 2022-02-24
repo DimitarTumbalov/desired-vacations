@@ -47,6 +47,61 @@ class DbHelper(context: Context) :
     }
 
     @SuppressLint("Range")
+    fun getVacationById(vacationId: Int): Vacation? {
+        val selection = "${BaseColumns._ID} LIKE ?"
+        val selectionArgs = arrayOf(vacationId.toString())
+
+        val cursor =
+            getDb()?.query(
+                VacationEntity.TABLE_NAME,
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+            )
+
+        if (cursor?.moveToFirst() == true) {
+            val id = cursor.getInt(cursor.getColumnIndex("_id"))
+            val name = cursor.getString(cursor.getColumnIndex(VacationEntity.COLUMN_NAME_NAME))
+            val location =
+                cursor.getString(cursor.getColumnIndex(VacationEntity.COLUMN_NAME_LOCATION))
+            val date = UiUtils.convertStringToDate(
+                cursor.getString(
+                    cursor.getColumnIndex(VacationEntity.COLUMN_NAME_DATE)
+                )
+            )
+            val hotelName =
+                cursor.getString(cursor.getColumnIndex(VacationEntity.COLUMN_NAME_HOTEL_NAME))
+            val necessaryMoneyAmount =
+                cursor.getInt(cursor.getColumnIndex(VacationEntity.COLUMN_NAME_NECESSARY_MONEY_AMOUNT))
+            val description =
+                cursor.getString(cursor.getColumnIndex(VacationEntity.COLUMN_NAME_DESCRIPTION))
+            val imageName =
+                cursor.getString(cursor.getColumnIndex(VacationEntity.COLUMN_NAME_IMAGE_NAME))
+
+            val vacation = Vacation(
+                id,
+                name,
+                location,
+                date!!,
+                hotelName,
+                necessaryMoneyAmount,
+                description,
+                imageName
+            )
+
+            cursor.close()
+
+            return vacation
+        } else {
+            cursor?.close()
+            return null
+        }
+    }
+
+    @SuppressLint("Range")
     fun getAllVacations(): Vector<Vacation> {
         val cursor =
             getDb()?.query(

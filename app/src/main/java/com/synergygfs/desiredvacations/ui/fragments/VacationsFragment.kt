@@ -93,7 +93,7 @@ class VacationsFragment : Fragment(), ItemViewListeners {
         findNavController().navigate(action)
     }
 
-    override fun onLongClick(vacationId: Int, vacationImageName: String?) {
+    override fun onLongClick(vacation: Vacation) {
         (activity as MainActivity?)?.let { activity ->
             val dialog = Dialog(requireActivity())
             dialog.setContentView(R.layout.dialog_confirm_action)
@@ -118,15 +118,18 @@ class VacationsFragment : Fragment(), ItemViewListeners {
 
                     // Delete the previous image
                     val file =
-                        File("${activity.cacheDir.path}/vacations_images/${vacationImageName}")
+                        File("${activity.cacheDir.path}/vacations_images/${vacation.imageName}")
                     if (file.exists())
                         file.delete()
 
-                    val deletedRow = activity.dbHelper?.deleteVacationById(vacationId)
+                    val deletedRow = activity.dbHelper?.deleteVacationById(vacation.id)
 
                     if (deletedRow != null && deletedRow > -1) {
+                        // Cancel previous reminders
+                        activity.alarmManager?.cancelReminders(vacation)
+
                         val vacationToDeleteIndex =
-                            vacationsCollection.indexOf(vacationsCollection.find { it.id == vacationId })
+                            vacationsCollection.indexOf(vacationsCollection.find { it.id == vacation.id })
                         vacationsCollection.removeAt(vacationToDeleteIndex)
                         adapter?.notifyItemRemoved(vacationToDeleteIndex)
 

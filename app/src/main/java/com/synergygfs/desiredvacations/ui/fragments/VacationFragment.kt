@@ -2,6 +2,7 @@ package com.synergygfs.desiredvacations.ui.fragments
 
 import android.os.Bundle
 import android.view.*
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -11,6 +12,7 @@ import com.synergygfs.desiredvacations.R
 import com.synergygfs.desiredvacations.UiUtils
 import com.synergygfs.desiredvacations.data.models.Vacation
 import com.synergygfs.desiredvacations.databinding.FragmentVacationBinding
+import com.synergygfs.desiredvacations.ui.MainActivity
 
 class VacationFragment : Fragment() {
 
@@ -43,6 +45,10 @@ class VacationFragment : Fragment() {
 
         vacation = args.vacation
         updateVacationInfo()
+
+        // Pop BackStack if vacation was deleted
+        if ((activity as MainActivity?)?.dbHelper?.getVacationById(vacation!!.id) == null)
+            findNavController().popBackStack()
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Vacation>("vacation")
             ?.observe(viewLifecycleOwner) {
@@ -85,6 +91,8 @@ class VacationFragment : Fragment() {
         binding.name.text = vacation!!.name
         binding.location.text = vacation!!.location
         binding.date.text = UiUtils.convertDateToString(vacation!!.date)
+        binding.remaindersLayout.isVisible =
+            (activity as MainActivity?)?.alarmManager?.doRemindersExist(vacation!!) ?: false
         vacation!!.hotelName?.let { binding.hotelName.text = it }
         vacation!!.necessaryMoneyAmount?.let { binding.necessaryMoneyAmount.text = it.toString() }
         vacation!!.description?.let { binding.description.text = it }

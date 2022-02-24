@@ -27,4 +27,10 @@
     <string name="vacation_edit_success">Vacation was updated successfully</string>
     <string name="vacation_edit_fail">Vacation couldn\'t be updated</string>
     <string name="save_changes">Save changes</string>
+    <string name="show_reminders_for_this_vacation">Show reminders for this vacation</string>
+    <string name="vacation_reminder_7_days">Your vacation is 7 days away</string>
+    <string name="vacation_reminder_tomorrow">Your vacation starts tomorrow</string>
+    <string name="vacation_reminder_today">Your vacation starts today</string>
+    <string name="vacation_reminder_started">Your vacation started!</string>
+    <string name="will_show_remainders">Will show remainders</string>
 </resources>

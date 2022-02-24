@@ -7,6 +7,7 @@ import android.app.TimePickerDialog
 import android.content.ContentValues
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Bundle
@@ -25,9 +26,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.synergygfs.desiredvacations.R
 import com.synergygfs.desiredvacations.UiUtils
 import com.synergygfs.desiredvacations.data.VacationsContract.VacationEntity
+import com.synergygfs.desiredvacations.data.models.Vacation
 import com.synergygfs.desiredvacations.databinding.FragmentAddVacationBinding
 import com.synergygfs.desiredvacations.ui.MainActivity
 import java.io.ByteArrayOutputStream
@@ -75,6 +82,7 @@ class AddVacationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.date.setOnClickListener {
+            activity?.currentFocus?.clearFocus()
             pickDate()
         }
 
@@ -157,9 +165,42 @@ class AddVacationFragment : Fragment() {
     }
 
     private fun loadImage() {
-        binding.chooseImageBtn.isVisible = false
-        Glide.with(this).load(imageBmp).centerCrop().into(binding.image)
-        binding.imageOptionsBtn.isVisible = true
+        Glide.with(this)
+            .load(imageBmp)
+            .centerCrop()
+            .placeholder(R.drawable.no_image)
+            .apply(
+                RequestOptions()
+                    .error(R.drawable.no_image)
+            )
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.imageOptionsBtn.isVisible = false
+                    binding.chooseImageBtn.isVisible = true
+
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.chooseImageBtn.isVisible = false
+                    binding.imageOptionsBtn.isVisible = true
+
+                    return false
+                }
+
+            })
+            .into(binding.image)
     }
 
     private fun removeImage() {
@@ -243,6 +284,17 @@ class AddVacationFragment : Fragment() {
                     getString(R.string.vacation_add_success),
                     Toast.LENGTH_SHORT
                 ).show()
+
+                if (binding.setReminderSwitch.isChecked)
+                    activity.alarmManager?.setReminder(
+                        Vacation(
+                            newRowId.toInt(),
+                            name,
+                            location,
+                            this.date!!,
+                            imageName = imageName
+                        )
+                    )
 
                 findNavController().popBackStack()
             } else // Show a toast that city creation failed

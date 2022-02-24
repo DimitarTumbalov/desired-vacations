@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/vacationsFragment"
         android:name="com.synergygfs.desiredvacations.ui.fragments.VacationsFragment"
-        android:label="Vacations"
+        android:label="Desired Vacations"
         tools:layout="@layout/fragment_vacations">
         <action
             android:id="@+id/action_vacationsFragment_to_addVacationFragment"

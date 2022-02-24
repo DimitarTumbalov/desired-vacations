@@ -86,10 +86,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
                     android:layout_marginTop="5dp"
-                    android:layout_marginBottom="15dp"
                     android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/remainders_layout"
                     app:layout_constraintTop_toBottomOf="@id/location_layout"
+                    app:layout_goneMarginBottom="15dp"
                     tools:ignore="UseCompoundDrawables">
 
                     <ImageView
@@ -109,6 +109,40 @@
                         android:layout_marginStart="5dp"
                         android:ellipsize="end"
                         android:lines="1"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/remainders_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="15dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/date_layout"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/icon"
+                        android:src="@drawable/ic_notification_active"
+                        app:tint="@color/white" />
+
+                    <TextView
+                        android:id="@+id/remainders"
+                        style="@style/p"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/will_show_remainders"
                         android:textColor="@color/white" />
 
                 </LinearLayout>

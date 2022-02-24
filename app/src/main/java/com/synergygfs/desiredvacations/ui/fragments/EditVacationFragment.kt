@@ -106,6 +106,7 @@ class EditVacationFragment : Fragment() {
         }
 
         date.setOnClickListener {
+            activity?.currentFocus?.clearFocus()
             pickDate()
         }
 
@@ -128,6 +129,8 @@ class EditVacationFragment : Fragment() {
         name.setText(vacation.name)
         location.setText(vacation.location)
         setDate(vacation.date)
+        binding.setReminderSwitch.isChecked =
+            (activity as MainActivity?)?.alarmManager?.doRemindersExist(vacation) ?: false
         vacation.hotelName?.let { binding.hotelName.setText(it) }
         vacation.necessaryMoneyAmount?.let { binding.necessaryMoneyAmount.setText(it.toString()) }
         vacation.description?.let { binding.description.setText(it) }
@@ -314,6 +317,20 @@ class EditVacationFragment : Fragment() {
                     getString(R.string.vacation_edit_success),
                     Toast.LENGTH_SHORT
                 ).show()
+
+                // Cancel previous reminders
+                activity.alarmManager?.cancelReminders(vacation)
+
+                if (binding.setReminderSwitch.isChecked) // Set new remainders
+                    activity.alarmManager?.setReminder(
+                        Vacation(
+                            newRowId.toInt(),
+                            name,
+                            location,
+                            this.date!!,
+                            imageName = imageName
+                        )
+                    )
 
                 findNavController().apply {
                     previousBackStackEntry?.savedStateHandle?.set(
