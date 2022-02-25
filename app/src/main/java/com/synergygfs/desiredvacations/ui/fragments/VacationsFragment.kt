@@ -1,7 +1,9 @@
 package com.synergygfs.desiredvacations.ui.fragments
 
 import android.app.Dialog
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +16,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.synergygfs.desiredvacations.R
 import com.synergygfs.desiredvacations.data.models.Vacation
 import com.synergygfs.desiredvacations.databinding.FragmentVacationsBinding
+import com.synergygfs.desiredvacations.ui.GridLayoutItemDecoration
 import com.synergygfs.desiredvacations.ui.MainActivity
 import com.synergygfs.desiredvacations.ui.adapters.ItemViewListeners
 import com.synergygfs.desiredvacations.ui.adapters.VacationsAdapter
@@ -38,7 +42,6 @@ class VacationsFragment : Fragment(), ItemViewListeners {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_vacations, container, false
         )
@@ -53,17 +56,14 @@ class VacationsFragment : Fragment(), ItemViewListeners {
 
         // Set up the CitiesAdapter
         val citiesRv = binding.vacationsRv
-        val lm = LinearLayoutManager(requireContext())
-        citiesRv.layoutManager = lm
         adapter = VacationsAdapter(vacationsCollection, this)
         citiesRv.adapter = adapter
 
-        // Add dividers between RecyclerView items
-        val dividerItemDecoration = DividerItemDecoration(
-            citiesRv.context,
-            lm.orientation
-        )
-        citiesRv.addItemDecoration(dividerItemDecoration)
+        // Set RecyclerView layout manager
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+            changeRecyclerViewLayoutToLinear()
+        else
+            changeRecyclerViewLayoutToGrid()
 
         // Update the RecyclerView UI
         binding.noVacationsScreen.isVisible = adapter?.itemCount ?: 0 < 1
@@ -88,8 +88,53 @@ class VacationsFragment : Fragment(), ItemViewListeners {
         }
     }
 
-    override fun onClick(vacation: Vacation) {
-        val action = VacationsFragmentDirections.actionVacationsFragmentToVacationFragment(vacation)
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT)
+            changeRecyclerViewLayoutToLinear()
+        else
+            changeRecyclerViewLayoutToGrid()
+    }
+
+    private fun changeRecyclerViewLayoutToLinear() {
+        binding.vacationsRv.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+
+            if (itemDecorationCount > 0)
+                removeItemDecorationAt(0)
+
+            addItemDecoration(
+                DividerItemDecoration(
+                    this.context,
+                    DividerItemDecoration.HORIZONTAL
+                )
+            )
+        }
+    }
+
+    private fun changeRecyclerViewLayoutToGrid() {
+        binding.vacationsRv.apply {
+            layoutManager = GridLayoutManager(requireContext(), 2)
+
+            if (itemDecorationCount > 0)
+                removeItemDecorationAt(0)
+
+            addItemDecoration(
+                GridLayoutItemDecoration(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        1f,
+                        context.resources.displayMetrics
+                    ).toInt()
+                )
+            )
+        }
+    }
+
+    override fun onClick(vacationId: Int) {
+        val action =
+            VacationsFragmentDirections.actionVacationsFragmentToVacationFragment(vacationId)
         findNavController().navigate(action)
     }
 
@@ -126,7 +171,7 @@ class VacationsFragment : Fragment(), ItemViewListeners {
 
                     if (deletedRow != null && deletedRow > -1) {
                         // Cancel previous reminders
-                        activity.alarmManager?.cancelReminders(vacation)
+                        activity.reminderManager?.cancelReminders(vacation)
 
                         val vacationToDeleteIndex =
                             vacationsCollection.indexOf(vacationsCollection.find { it.id == vacation.id })

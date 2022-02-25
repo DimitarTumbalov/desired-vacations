@@ -16,6 +16,7 @@
     <color name="secondaryVariant">@color/teal_700</color>
 
     <color name="background">@color/white</color>
+    <color name="background_secondary">#E3E3E3</color>
 
     <color name="text_high">#212121</color>
     <color name="text_medium">#666666</color>

@@ -40,23 +40,29 @@
                 <TextView
                     android:id="@+id/name"
                     style="@style/h4"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
                     android:layout_marginTop="15dp"
                     android:ellipsize="end"
                     android:lines="1"
                     android:textColor="@color/white"
-                    app:layout_constraintTop_toBottomOf="@id/image" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/image"
+                    app:layout_constraintWidth_max="500dp" />
 
                 <LinearLayout
                     android:id="@+id/location_layout"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
                     android:layout_marginTop="5dp"
                     android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/name"
+                    app:layout_constraintWidth_max="500dp"
                     tools:ignore="UseCompoundDrawables">
 
                     <ImageView
@@ -82,13 +88,16 @@
 
                 <LinearLayout
                     android:id="@+id/date_layout"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
                     android:layout_marginTop="5dp"
                     android:orientation="horizontal"
-                    app:layout_constraintBottom_toTopOf="@id/remainders_layout"
+                    app:layout_constraintBottom_toTopOf="@id/reminders_layout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/location_layout"
+                    app:layout_constraintWidth_max="500dp"
                     app:layout_goneMarginBottom="15dp"
                     tools:ignore="UseCompoundDrawables">
 
@@ -114,15 +123,18 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/remainders_layout"
-                    android:layout_width="match_parent"
+                    android:id="@+id/reminders_layout"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="15dp"
                     android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/date_layout"
+                    app:layout_constraintWidth_max="500dp"
                     tools:ignore="UseCompoundDrawables">
 
                     <ImageView
@@ -134,7 +146,7 @@
                         app:tint="@color/white" />
 
                     <TextView
-                        android:id="@+id/remainders"
+                        android:id="@+id/reminders"
                         style="@style/p"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -142,7 +154,7 @@
                         android:layout_marginStart="5dp"
                         android:ellipsize="end"
                         android:lines="1"
-                        android:text="@string/will_show_remainders"
+                        android:text="@string/will_show_reminders"
                         android:textColor="@color/white" />
 
                 </LinearLayout>
@@ -151,12 +163,15 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/optional_layout"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/background"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/required_layout"
-                app:layout_constraintVertical_bias="0">
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintWidth_max="500dp">
 
                 <LinearLayout
                     android:id="@+id/hotel_name_layout"
@@ -237,7 +252,8 @@
                         android:layout_gravity="center"
                         android:ellipsize="end"
                         android:lines="1"
-                        android:text="@string/more" />
+                        android:text="@string/more"
+                        android:textColor="?colorControlNormal" />
 
                     <TextView
                         android:id="@+id/description"

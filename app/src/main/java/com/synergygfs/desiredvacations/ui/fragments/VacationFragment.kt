@@ -32,7 +32,6 @@ class VacationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_vacation, container, false
         )
@@ -43,18 +42,16 @@ class VacationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        vacation = args.vacation
-        updateVacationInfo()
+        val vacationId = args.vacationId
+
+        // Get Vacation from database
+        vacation = (activity as MainActivity?)?.dbHelper?.getVacationById(vacationId)
 
         // Pop BackStack if vacation was deleted
-        if ((activity as MainActivity?)?.dbHelper?.getVacationById(vacation!!.id) == null)
+        if (vacation == null)
             findNavController().popBackStack()
-
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Vacation>("vacation")
-            ?.observe(viewLifecycleOwner) {
-                vacation = it
-                updateVacationInfo()
-            }
+        else
+            updateVacationInfo()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -91,8 +88,8 @@ class VacationFragment : Fragment() {
         binding.name.text = vacation!!.name
         binding.location.text = vacation!!.location
         binding.date.text = UiUtils.convertDateToString(vacation!!.date)
-        binding.remaindersLayout.isVisible =
-            (activity as MainActivity?)?.alarmManager?.doRemindersExist(vacation!!) ?: false
+        binding.remindersLayout.isVisible =
+            (activity as MainActivity).reminderManager!!.doRemindersExist(vacation!!)
         vacation!!.hotelName?.let { binding.hotelName.text = it }
         vacation!!.necessaryMoneyAmount?.let { binding.necessaryMoneyAmount.text = it.toString() }
         vacation!!.description?.let { binding.description.text = it }

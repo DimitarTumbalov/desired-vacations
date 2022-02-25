@@ -2,6 +2,7 @@ package com.synergygfs.desiredvacations
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.os.Parcelable.Creator
 import java.util.*
 
 
@@ -16,11 +17,18 @@ class ParcelableUtils {
             return bytes
         }
 
-        fun unmarshall(bytes: ByteArray): Parcel {
+        private fun unmarshall(bytes: ByteArray): Parcel {
             val parcel = Parcel.obtain()
             parcel.unmarshall(bytes, 0, bytes.size)
             parcel.setDataPosition(0) // This is extremely important!
             return parcel
+        }
+
+        fun <T> unmarshall(bytes: ByteArray, creator: Creator<T>): T {
+            val parcel = unmarshall(bytes)
+            val result = creator.createFromParcel(parcel)
+            parcel.recycle()
+            return result
         }
 
         fun Parcel.writeDate(date: Date?) {

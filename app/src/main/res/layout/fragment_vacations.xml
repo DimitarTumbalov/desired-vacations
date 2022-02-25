@@ -11,14 +11,15 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/vacations_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@color/background_secondary"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
         <TextView
             android:id="@+id/no_vacations_screen"
             style="@style/p_bold"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/background"
             android:gravity="center"
             android:text="@string/no_vacations"
             android:visibility="gone" />

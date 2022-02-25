@@ -7,8 +7,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.synergygfs.desiredvacations.AlarmManager
 import com.synergygfs.desiredvacations.R
+import com.synergygfs.desiredvacations.ReminderManager
 import com.synergygfs.desiredvacations.data.DbHelper
 import com.synergygfs.desiredvacations.databinding.ActivityMainBinding
 
@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     var dbHelper: DbHelper? = null
-    var alarmManager: AlarmManager? = null
+    var reminderManager: ReminderManager? = null
 
     private var lastDialog: Dialog? = null
 
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         dbHelper = DbHelper(this)
 
         // Set up AlarmManager
-        alarmManager = AlarmManager(this)
+        reminderManager = ReminderManager(this)
     }
 
     fun showDialog(dialog: Dialog) {
@@ -52,5 +52,4 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
         lastDialog = dialog
     }
-
 }

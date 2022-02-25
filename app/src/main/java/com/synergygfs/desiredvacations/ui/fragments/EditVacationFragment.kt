@@ -48,7 +48,7 @@ class EditVacationFragment : Fragment() {
 
     private lateinit var binding: FragmentEditVacationBinding
 
-    private val args: VacationFragmentArgs by navArgs()
+    private val args: EditVacationFragmentArgs by navArgs()
 
     private lateinit var vacation: Vacation
 
@@ -61,7 +61,11 @@ class EditVacationFragment : Fragment() {
     private val selectImageFromGalleryResult =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             if (uri == null)
-                Toast.makeText(requireContext(), "Image couldn't be resolved", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.image_not_resolved),
+                    Toast.LENGTH_SHORT
+                )
             else {
                 val inputStream =
                     requireContext().contentResolver.openInputStream(uri)
@@ -76,7 +80,6 @@ class EditVacationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_edit_vacation, container, false
         )
@@ -130,7 +133,7 @@ class EditVacationFragment : Fragment() {
         location.setText(vacation.location)
         setDate(vacation.date)
         binding.setReminderSwitch.isChecked =
-            (activity as MainActivity?)?.alarmManager?.doRemindersExist(vacation) ?: false
+            (activity as MainActivity?)?.reminderManager?.doRemindersExist(vacation) ?: false
         vacation.hotelName?.let { binding.hotelName.setText(it) }
         vacation.necessaryMoneyAmount?.let { binding.necessaryMoneyAmount.setText(it.toString()) }
         vacation.description?.let { binding.description.setText(it) }
@@ -149,38 +152,40 @@ class EditVacationFragment : Fragment() {
         val currentHour = calendar[Calendar.HOUR_OF_DAY]
         val currentMinute = calendar[Calendar.MINUTE]
 
-        val datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { _, year, month, day ->
-                // Show time picker dialog
-                TimePickerDialog(
-                    requireContext(),
-                    { _, hour, minute ->
+        requireContext().let { context ->
+            val datePickerDialog = DatePickerDialog(
+                context,
+                { _, year, month, day ->
+                    // Show time picker dialog
+                    TimePickerDialog(
+                        context,
+                        { _, hour, minute ->
 
-                        // Create picked date
-                        val pickedDateTime = Calendar.getInstance()
-                        pickedDateTime.set(year, month, day, hour, minute)
+                            // Create picked date
+                            val pickedDateTime = Calendar.getInstance()
+                            pickedDateTime.set(year, month, day, hour, minute)
 
-                        // Set the date
-                        pickedDateTime.time.let {
-                            this.date = it
-                            binding.date.setText(UiUtils.convertDateToString(it))
-                            validateForm()
-                        }
-                    },
-                    currentHour,
-                    currentMinute,
-                    DateFormat.is24HourFormat(requireContext())
-                ).show()
-            },
-            currentYear,
-            currentMonth,
-            currentDay
-        )
+                            // Set the date
+                            pickedDateTime.time.let {
+                                this.date = it
+                                binding.date.setText(UiUtils.convertDateToString(it))
+                                validateForm()
+                            }
+                        },
+                        currentHour,
+                        currentMinute,
+                        DateFormat.is24HourFormat(context)
+                    ).show()
+                },
+                currentYear,
+                currentMonth,
+                currentDay
+            )
 
-        datePickerDialog.datePicker.minDate = now
-        // Show date picker dialog
-        datePickerDialog.show()
+            datePickerDialog.datePicker.minDate = now
+            // Show date picker dialog
+            datePickerDialog.show()
+        }
     }
 
     private fun pickImage() {
@@ -264,7 +269,7 @@ class EditVacationFragment : Fragment() {
         val location = binding.location.text.toString()
         val date = binding.date.text.toString()
         val hotelName = binding.hotelName.text.toString()
-        val necessaryMoneyAmount = binding.necessaryMoneyAmount.text.toString().toInt()
+        val necessaryMoneyAmount = binding.necessaryMoneyAmount.text.toString()
         val description = binding.description.text.toString()
         var imageName: String? = null
 
@@ -319,10 +324,10 @@ class EditVacationFragment : Fragment() {
                 ).show()
 
                 // Cancel previous reminders
-                activity.alarmManager?.cancelReminders(vacation)
+                activity.reminderManager?.cancelReminders(vacation)
 
-                if (binding.setReminderSwitch.isChecked) // Set new remainders
-                    activity.alarmManager?.setReminder(
+                if (binding.setReminderSwitch.isChecked) // Set new reminders
+                    activity.reminderManager?.setReminder(
                         Vacation(
                             newRowId.toInt(),
                             name,
@@ -332,21 +337,7 @@ class EditVacationFragment : Fragment() {
                         )
                     )
 
-                findNavController().apply {
-                    previousBackStackEntry?.savedStateHandle?.set(
-                        "vacation", Vacation(
-                            vacation.id,
-                            name,
-                            location,
-                            this@EditVacationFragment.date!!,
-                            hotelName,
-                            necessaryMoneyAmount,
-                            description,
-                            imageName
-                        )
-                    )
-                    popBackStack()
-                }
+                findNavController().popBackStack()
             } else // Show a toast that vacation creation failed
                 Toast.makeText(
                     activity,

@@ -55,7 +55,11 @@ class AddVacationFragment : Fragment() {
     private val selectImageFromGalleryResult =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             if (uri == null)
-                Toast.makeText(requireContext(), "Image couldn't be resolved", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.image_not_resolved),
+                    Toast.LENGTH_SHORT
+                )
             else {
                 val inputStream =
                     requireContext().contentResolver.openInputStream(uri)
@@ -124,39 +128,42 @@ class AddVacationFragment : Fragment() {
         val currentHour = calendar[Calendar.HOUR_OF_DAY]
         val currentMinute = calendar[Calendar.MINUTE]
 
-        val datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { _, year, month, day ->
-                // Show time picker dialog
-                TimePickerDialog(
-                    requireContext(),
-                    { _, hour, minute ->
+        requireContext().let { context ->
+            val datePickerDialog = DatePickerDialog(
+                context,
+                { _, year, month, day ->
+                    // Show time picker dialog
+                    TimePickerDialog(
+                        context,
+                        { _, hour, minute ->
 
-                        // Create picked date
-                        val pickedDateTime = Calendar.getInstance()
-                        pickedDateTime.set(year, month, day, hour, minute)
+                            // Create picked date
+                            val pickedDateTime = Calendar.getInstance()
+                            pickedDateTime.set(year, month, day, hour, minute)
 
-                        // Set the date
-                        setDate(pickedDateTime.time)
-                    },
-                    currentHour,
-                    currentMinute,
-                    DateFormat.is24HourFormat(requireContext())
-                ).show()
-            },
-            currentYear,
-            currentMonth,
-            currentDay
-        )
+                            // Set the date
+                            setDate(pickedDateTime.time)
+                        },
+                        currentHour,
+                        currentMinute,
+                        DateFormat.is24HourFormat(context)
+                    ).show()
+                },
+                currentYear,
+                currentMonth,
+                currentDay
+            )
 
-        datePickerDialog.datePicker.minDate = now
-        // Show date picker dialog
-        datePickerDialog.show()
+            datePickerDialog.datePicker.minDate = now
+            // Show date picker dialog
+            datePickerDialog.show()
+        }
     }
 
     private fun setDate(date: Date) {
-        this.date = date
-        binding.date.setText(UiUtils.convertDateToString(date))
+        val dateString = UiUtils.convertDateToString(date)
+        this.date = UiUtils.convertStringToDate(dateString)
+        binding.date.setText(dateString)
         validateForm()
     }
 
@@ -286,7 +293,7 @@ class AddVacationFragment : Fragment() {
                 ).show()
 
                 if (binding.setReminderSwitch.isChecked)
-                    activity.alarmManager?.setReminder(
+                    activity.reminderManager?.setReminder(
                         Vacation(
                             newRowId.toInt(),
                             name,
@@ -297,7 +304,7 @@ class AddVacationFragment : Fragment() {
                     )
 
                 findNavController().popBackStack()
-            } else // Show a toast that city creation failed
+            } else // Show a toast that creation of the vacation failed
                 Toast.makeText(
                     activity,
                     getString(R.string.vacation_add_fail),

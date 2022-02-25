@@ -32,14 +32,15 @@
         android:name="com.synergygfs.desiredvacations.ui.fragments.VacationFragment"
         android:label="Vacation Info"
         tools:layout="@layout/fragment_vacation">
-        <argument
-            android:name="vacation"
-            app:argType="com.synergygfs.desiredvacations.data.models.Vacation" />
         <action
             android:id="@+id/action_vacationFragment_to_editVacationFragment"
             app:destination="@id/editVacationFragment"
             app:enterAnim="@anim/slide_in_right"
             app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="vacationId"
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
 
     <fragment

@@ -31,9 +31,7 @@ class VacationReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         // Get vacation from extras
         val vacationByteArray = intent.getByteArrayExtra("vacation")
-        val vacationParcel = ParcelableUtils.unmarshall(vacationByteArray!!)
-        val vacation = Vacation(vacationParcel)
-
+        val vacation = ParcelableUtils.unmarshall(vacationByteArray!!, Vacation.CREATOR)
         // Get request code from extras
         val requestCode = intent.getIntExtra("requestCode", REQUEST_CODE_FIRST_REMINDER)
 
@@ -53,7 +51,7 @@ class VacationReminderReceiver : BroadcastReceiver() {
 
         // Create bundle for deep link
         val bundle = Bundle()
-        bundle.putParcelable("vacation", vacation)
+        bundle.putInt("vacationId", vacation.id)
 
         // Create deep link to vacation fragment
         val pendingIntent = NavDeepLinkBuilder(context)
@@ -103,6 +101,7 @@ class VacationReminderReceiver : BroadcastReceiver() {
                     )
             }
 
+            // Set the title depending on the request code
             when (requestCode) {
                 REQUEST_CODE_FORTH_REMINDER -> {
                     notificationBuilder.setContentTitle(context.getString(R.string.vacation_reminder_7_days))

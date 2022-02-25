@@ -86,10 +86,10 @@ class DbHelper(context: Context) :
                 name,
                 location,
                 date!!,
-                hotelName,
-                necessaryMoneyAmount,
-                description,
-                imageName
+                hotelName?.ifBlank { null },
+                necessaryMoneyAmount.takeIf { it > 0 },
+                description?.ifBlank { null },
+                imageName?.ifBlank { null }
             )
 
             cursor.close()
@@ -141,10 +141,10 @@ class DbHelper(context: Context) :
                     name,
                     location,
                     date!!,
-                    hotelName,
-                    necessaryMoneyAmount,
-                    description,
-                    imageName
+                    hotelName?.ifBlank { null },
+                    necessaryMoneyAmount.takeIf { it > 0 },
+                    description?.ifBlank { null },
+                    imageName?.ifBlank { null }
                 )
                 vacationsCollection.add(vacation)
             } catch (e: Exception) {
