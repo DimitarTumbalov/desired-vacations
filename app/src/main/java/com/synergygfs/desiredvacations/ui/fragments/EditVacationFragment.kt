@@ -259,8 +259,9 @@ class EditVacationFragment : Fragment() {
     }
 
     private fun setDate(date: Date) {
-        this.date = date
-        binding.date.setText(UiUtils.convertDateToString(date))
+        val dateString = UiUtils.convertDateToString(date)
+        this.date = UiUtils.convertStringToDate(dateString)
+        binding.date.setText(dateString)
         validateForm()
     }
 
