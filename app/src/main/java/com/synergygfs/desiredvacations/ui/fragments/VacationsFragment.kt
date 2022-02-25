@@ -54,10 +54,10 @@ class VacationsFragment : Fragment(), ItemViewListeners {
 
         vacationsCollection = (activity as MainActivity?)?.dbHelper?.getAllVacations() ?: Vector()
 
-        // Set up the CitiesAdapter
-        val citiesRv = binding.vacationsRv
+        // Set up the VacationsAdapter
+        val vacationsRv = binding.vacationsRv
         adapter = VacationsAdapter(vacationsCollection, this)
-        citiesRv.adapter = adapter
+        vacationsRv.adapter = adapter
 
         // Set RecyclerView layout manager
         if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
@@ -107,7 +107,7 @@ class VacationsFragment : Fragment(), ItemViewListeners {
             addItemDecoration(
                 DividerItemDecoration(
                     this.context,
-                    DividerItemDecoration.HORIZONTAL
+                    DividerItemDecoration.VERTICAL
                 )
             )
         }

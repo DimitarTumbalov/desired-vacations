@@ -31,7 +31,6 @@
     <string name="vacation_reminder_7_days">Your vacation is 7 days away</string>
     <string name="vacation_reminder_tomorrow">Your vacation starts tomorrow</string>
     <string name="vacation_reminder_today">Your vacation starts today</string>
-    <string name="vacation_reminder_started">Your vacation has started!</string>
     <string name="will_show_reminders">Will show reminders</string>
     <string name="image_not_resolved">Image couldn\'t be resolved</string>
 </resources>

@@ -307,7 +307,6 @@ class EditVacationFragment : Fragment() {
 
         // Insert the new row, returning the primary key value of the new row
         (activity as MainActivity?)?.let { activity ->
-
             // Delete the previous image
             val file = File("${activity.cacheDir.path}/vacations_images/${vacation.imageName}")
             if (file.exists())

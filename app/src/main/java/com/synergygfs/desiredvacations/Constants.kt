@@ -11,11 +11,9 @@ class Constants {
 
         const val NOTIFICATION_GROUP_DESIRED_VACATIONS = "com.synergygfs.desiredvacations"
 
-        const val REQUEST_CODE_FIRST_REMINDER = 0
-        const val REQUEST_CODE_SECOND_REMINDER = 1
-        const val REQUEST_CODE_THIRD_REMINDER = 2
-        const val REQUEST_CODE_FORTH_REMINDER = 3
-
+        const val REQUEST_CODE_REMINDER_TODAY = 0
+        const val REQUEST_CODE_REMINDER_TOMORROW = 1
+        const val REQUEST_CODE_REMINDER_WEEK = 2
     }
 
 }

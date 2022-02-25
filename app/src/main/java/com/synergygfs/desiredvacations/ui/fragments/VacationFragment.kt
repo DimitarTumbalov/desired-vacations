@@ -90,8 +90,23 @@ class VacationFragment : Fragment() {
         binding.date.text = UiUtils.convertDateToString(vacation!!.date)
         binding.remindersLayout.isVisible =
             (activity as MainActivity).reminderManager!!.doRemindersExist(vacation!!)
-        vacation!!.hotelName?.let { binding.hotelName.text = it }
-        vacation!!.necessaryMoneyAmount?.let { binding.necessaryMoneyAmount.text = it.toString() }
-        vacation!!.description?.let { binding.description.text = it }
+
+        if (vacation?.hotelName != null) {
+            binding.hotelName.text = vacation?.hotelName
+            binding.hotelNameLayout.isVisible = true
+        } else
+            binding.hotelNameLayout.isVisible = false
+
+        if (vacation?.necessaryMoneyAmount != null) {
+            binding.necessaryMoneyAmount.text = vacation?.necessaryMoneyAmount.toString()
+            binding.necessaryMoneyAmountLayout.isVisible = true
+        } else
+            binding.necessaryMoneyAmountLayout.isVisible = false
+
+        if (vacation?.description != null) {
+            binding.description.text = vacation?.description
+            binding.descriptionLayout.isVisible = true
+        } else
+            binding.descriptionLayout.isVisible = false
     }
 }

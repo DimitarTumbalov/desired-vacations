@@ -1,39 +1,36 @@
-package com.synergygfs.desiredvacations.ui
+package com.synergygfs.desiredvacations.ui.workers
 
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getColor
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavDeepLinkBuilder
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 import com.synergygfs.desiredvacations.Constants
-import com.synergygfs.desiredvacations.Constants.Companion.REQUEST_CODE_FIRST_REMINDER
-import com.synergygfs.desiredvacations.Constants.Companion.REQUEST_CODE_FORTH_REMINDER
-import com.synergygfs.desiredvacations.Constants.Companion.REQUEST_CODE_SECOND_REMINDER
-import com.synergygfs.desiredvacations.Constants.Companion.REQUEST_CODE_THIRD_REMINDER
 import com.synergygfs.desiredvacations.ParcelableUtils
 import com.synergygfs.desiredvacations.R
 import com.synergygfs.desiredvacations.data.models.Vacation
+import com.synergygfs.desiredvacations.ui.MainActivity
 import java.io.File
 
+class ShowReminderWorker(private val context: Context, private val workerParams: WorkerParameters) :
+    Worker(context, workerParams) {
+    override fun doWork(): Result {
+        val data = workerParams.inputData
 
-class VacationReminderReceiver : BroadcastReceiver() {
-    @SuppressLint("UnsafeProtectedBroadcastReceiver")
-    override fun onReceive(context: Context, intent: Intent) {
         // Get vacation from extras
-        val vacationByteArray = intent.getByteArrayExtra("vacation")
+        val vacationByteArray = data.getByteArray("vacation")
         val vacation = ParcelableUtils.unmarshall(vacationByteArray!!, Vacation.CREATOR)
         // Get request code from extras
-        val requestCode = intent.getIntExtra("requestCode", REQUEST_CODE_FIRST_REMINDER)
+        val requestCode = data.getInt("requestCode", Constants.REQUEST_CODE_REMINDER_TODAY)
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
@@ -86,8 +83,8 @@ class VacationReminderReceiver : BroadcastReceiver() {
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
                 .setContentIntent(pendingIntent)
                 .setContentText("Location: ${vacation.location}")
-                .setColor(getColor(context, R.color.primary))
-                .setDefaults(Notification.DEFAULT_SOUND)
+                .setColor(ContextCompat.getColor(context, R.color.primary))
+                .setDefaults(Notification.DEFAULT_ALL)
                 .setGroup(Constants.NOTIFICATION_GROUP_DESIRED_VACATIONS)
                 .setAutoCancel(true)
 
@@ -103,22 +100,22 @@ class VacationReminderReceiver : BroadcastReceiver() {
 
             // Set the title depending on the request code
             when (requestCode) {
-                REQUEST_CODE_FORTH_REMINDER -> {
+                Constants.REQUEST_CODE_REMINDER_WEEK -> {
                     notificationBuilder.setContentTitle(context.getString(R.string.vacation_reminder_7_days))
                 }
-                REQUEST_CODE_THIRD_REMINDER -> {
+                Constants.REQUEST_CODE_REMINDER_TOMORROW -> {
                     notificationBuilder.setContentTitle(context.getString(R.string.vacation_reminder_tomorrow))
                 }
-                REQUEST_CODE_SECOND_REMINDER -> {
-                    notificationBuilder.setContentTitle(context.getString(R.string.vacation_reminder_today))
-                }
                 else -> {
-                    notificationBuilder.setContentTitle(context.getString(R.string.vacation_reminder_started))
+                    notificationBuilder.setContentTitle(context.getString(R.string.vacation_reminder_today))
                 }
             }
 
             // Post the Notification on the Channel.
             notificationManager?.notify(notificationId, notificationBuilder.build())
         }
+
+        // Indicate that the work finished successfully with the Result
+        return Result.success()
     }
 }
